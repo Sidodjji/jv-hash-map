@@ -30,17 +30,17 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
 
         Node<K, V> current = node;
         while (current != null) {
-            if (current.getHash() == hash && Objects.equals(current.getKey(), key)) {
-                current.setValue(value);
+            if (current.hash == hash && Objects.equals(current.key, key)) {
+                current.value = value;
                 return;
             }
-            if (current.getNext() == null) {
+            if (current.next == null) {
                 break;
             }
-            current = current.getNext();
+            current = current.next;
         }
 
-        current.setNext(new Node<>(hash, key, value, null));
+        current.next = new Node<>(hash, key, value, null);
         size++;
     }
 
@@ -51,10 +51,10 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
 
         Node<K, V> node = table[index];
         while (node != null) {
-            if (node.getHash() == hash && Objects.equals(node.getKey(), key)) {
-                return node.getValue();
+            if (node.hash == hash && Objects.equals(node.key, key)) {
+                return node.value;
             }
-            node = node.getNext();
+            node = node.next;
         }
         return null;
     }
@@ -76,8 +76,8 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
         for (int i = 0; i < oldCapacity; i++) {
             Node<K, V> node = oldTable[i];
             while (node != null) {
-                put(node.getKey(), node.getValue());
-                node = node.getNext();
+                put(node.key, node.value);
+                node = node.next;
             }
         }
     }
@@ -97,30 +97,6 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
             this.hash = hash;
             this.key = key;
             this.value = value;
-            this.next = next;
-        }
-
-        public int getHash() {
-            return hash;
-        }
-
-        public K getKey() {
-            return key;
-        }
-
-        public V getValue() {
-            return value;
-        }
-
-        public Node<K, V> getNext() {
-            return next;
-        }
-
-        public void setValue(V value) {
-            this.value = value;
-        }
-
-        public void setNext(Node<K, V> next) {
             this.next = next;
         }
     }
