@@ -4,16 +4,13 @@ import java.util.Objects;
 
 public class MyHashMap<K, V> implements MyMap<K, V> {
     private static final int DEFAULT_CAPACITY = 16;
-    private static final float DEFAULT_LOAD_FACTOR = 0.75f;
+    private static final float LOAD_FACTOR = 0.75f;
+    private static final int RESIZE_MULTIPLIER = 2;
 
     private int size;
     private int capacity = DEFAULT_CAPACITY;
-    private int threshold = (int) (DEFAULT_CAPACITY * DEFAULT_LOAD_FACTOR);
-    private Node<K, V>[] table;
-
-    public MyHashMap() {
-        table = new Node[capacity];
-    }
+    private int threshold = (int) (DEFAULT_CAPACITY * LOAD_FACTOR);
+    private Node<K, V>[] table = new Node[capacity];
 
     @Override
     public void put(K key, V value) {
@@ -23,7 +20,6 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
 
         int hash = hash(key);
         int index = hash & (capacity - 1);
-
         Node<K, V> node = table[index];
 
         if (node == null) {
@@ -32,7 +28,6 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
             return;
         }
 
-        // ищем по цепочке
         Node<K, V> current = node;
         while (current != null) {
             if (current.getHash() == hash && Objects.equals(current.getKey(), key)) {
@@ -55,14 +50,12 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
         int index = hash & (capacity - 1);
 
         Node<K, V> node = table[index];
-
         while (node != null) {
             if (node.getHash() == hash && Objects.equals(node.getKey(), key)) {
                 return node.getValue();
             }
             node = node.getNext();
         }
-
         return null;
     }
 
@@ -75,8 +68,8 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
         final int oldCapacity = capacity;
         Node<K, V>[] oldTable = table;
 
-        capacity *= 2;
-        threshold = (int) (capacity * DEFAULT_LOAD_FACTOR);
+        capacity *= RESIZE_MULTIPLIER;
+        threshold = (int) (capacity * LOAD_FACTOR);
         table = new Node[capacity];
         size = 0;
 
@@ -111,28 +104,20 @@ public class MyHashMap<K, V> implements MyMap<K, V> {
             return hash;
         }
 
-        public void setHash(int hash) {
-            this.hash = hash;
-        }
-
         public K getKey() {
             return key;
-        }
-
-        public void setKey(K key) {
-            this.key = key;
         }
 
         public V getValue() {
             return value;
         }
 
-        public void setValue(V value) {
-            this.value = value;
-        }
-
         public Node<K, V> getNext() {
             return next;
+        }
+
+        public void setValue(V value) {
+            this.value = value;
         }
 
         public void setNext(Node<K, V> next) {
